@@ -400,7 +400,7 @@ func ExecTx(blockCache *BlockCache, tx types.Tx, runCall bool, evc events.Fireab
 			outAcc = blockCache.GetAccount(tx.Address)
 		}
 
-		log.Info(Fmt("Out account: %v", outAcc))
+//		log.Info(Fmt("Out account: %v", outAcc))
 
 		// Good!
 		value := tx.Input.Amount - tx.Fee
@@ -455,10 +455,10 @@ func ExecTx(blockCache *BlockCache, tx types.Tx, runCall bool, evc events.Fireab
 				code = tx.Data
 			} else {
 				callee = toVMAccount(outAcc)
-				log.Info(Fmt("Calling contract %X with code %X", callee.Address, callee.Code))
+//				log.Info(Fmt("Calling contract %X with code %X", callee.Address, callee.Code))
 				code = callee.Code
 			}
-			log.Info(Fmt("Code for this contract: %X", code))
+//			log.Info(Fmt("Code for this contract: %X", code))
 
 			// Run VM call and sync txCache to blockCache.
 			{ // Capture scope for goto.
@@ -471,11 +471,11 @@ func ExecTx(blockCache *BlockCache, tx types.Tx, runCall bool, evc events.Fireab
 				ret, err = vmach.Call(caller, callee, code, tx.Data, value, &gas)
 				if err != nil {
 					// Failure. Charge the gas fee. The 'value' was otherwise not transferred.
-					log.Info(Fmt("Error on execution: %v", err))
+//					log.Info(Fmt("Error on execution: %v", err))
 					goto CALL_COMPLETE
 				}
 
-				log.Info("Successful execution")
+//				log.Info("Successful execution")
 				if createContract {
 					callee.Code = ret
 				}
@@ -485,7 +485,7 @@ func ExecTx(blockCache *BlockCache, tx types.Tx, runCall bool, evc events.Fireab
 		CALL_COMPLETE: // err may or may not be nil.
 
 			// Create a receipt from the ret and whether errored.
-			log.Notice("VM call complete", "caller", caller, "callee", callee, "return", ret, "err", err)
+//			log.Notice("VM call complete", "caller", caller, "callee", callee, "return", ret, "err", err)
 
 			// Fire Events for sender and receiver
 			// a separate event will be fired from vm for each additional call
@@ -553,7 +553,7 @@ func ExecTx(blockCache *BlockCache, tx types.Tx, runCall bool, evc events.Fireab
 		expiresIn := int(value / costPerBlock)
 		lastBlockHeight := _s.LastBlockHeight
 
-		log.Info("New NameTx", "value", value, "costPerBlock", costPerBlock, "expiresIn", expiresIn, "lastBlock", lastBlockHeight)
+//		log.Info("New NameTx", "value", value, "costPerBlock", costPerBlock, "expiresIn", expiresIn, "lastBlock", lastBlockHeight)
 
 		// check if the name exists
 		entry := blockCache.GetNameRegEntry(tx.Name)

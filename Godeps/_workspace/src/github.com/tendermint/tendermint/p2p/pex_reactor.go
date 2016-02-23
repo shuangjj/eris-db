@@ -89,10 +89,10 @@ func (pexR *PEXReactor) Receive(chID byte, src *Peer, msgBytes []byte) {
 	// decode message
 	_, msg, err := DecodeMessage(msgBytes)
 	if err != nil {
-		log.Warn("Error decoding message", "error", err)
+//		log.Warn("Error decoding message", "error", err)
 		return
 	}
-	log.Notice("Received message", "msg", msg)
+//	log.Notice("Received message", "msg", msg)
 
 	switch msg := msg.(type) {
 	case *pexRequestMessage:
@@ -149,7 +149,7 @@ FOR_LOOP:
 func (pexR *PEXReactor) ensurePeers() {
 	numOutPeers, _, numDialing := pexR.Switch.NumPeers()
 	numToDial := minNumOutboundPeers - (numOutPeers + numDialing)
-	log.Info("Ensure peers", "numOutPeers", numOutPeers, "numDialing", numDialing, "numToDial", numToDial)
+//	log.Info("Ensure peers", "numOutPeers", numOutPeers, "numDialing", numDialing, "numToDial", numToDial)
 	if numToDial <= 0 {
 		return
 	}

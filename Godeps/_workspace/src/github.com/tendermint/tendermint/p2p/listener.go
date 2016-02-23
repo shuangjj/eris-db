@@ -162,16 +162,16 @@ func (l *DefaultListener) String() string {
 
 // UPNP external address discovery & port mapping
 func getUPNPExternalAddress(externalPort, internalPort int) *NetAddress {
-	log.Info("Getting UPNP external address")
+//	log.Info("Getting UPNP external address")
 	nat, err := upnp.Discover()
 	if err != nil {
-		log.Info("Could not perform UPNP discover", "error", err)
+//		log.Info("Could not perform UPNP discover", "error", err)
 		return nil
 	}
 
 	ext, err := nat.GetExternalAddress()
 	if err != nil {
-		log.Info("Could not get UPNP external address", "error", err)
+//		log.Info("Could not get UPNP external address", "error", err)
 		return nil
 	}
 
@@ -182,11 +182,11 @@ func getUPNPExternalAddress(externalPort, internalPort int) *NetAddress {
 
 	externalPort, err = nat.AddPortMapping("tcp", externalPort, internalPort, "tendermint", 0)
 	if err != nil {
-		log.Info("Could not add UPNP port mapping", "error", err)
+//		log.Info("Could not add UPNP port mapping", "error", err)
 		return nil
 	}
 
-	log.Info("Got UPNP external address", "address", ext)
+//	log.Info("Got UPNP external address", "address", ext)
 	return NewNetAddressIPPort(ext, uint16(externalPort))
 }
 

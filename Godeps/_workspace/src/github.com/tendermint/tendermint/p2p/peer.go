@@ -35,7 +35,7 @@ func peerHandshake(conn net.Conn, ourNodeInfo *types.NodeInfo) (*types.NodeInfo,
 		func() {
 			var n int64
 			wire.ReadBinary(peerNodeInfo, conn, &n, &err2)
-			log.Notice("Peer handshake", "peerNodeInfo", peerNodeInfo)
+//			log.Notice("Peer handshake", "peerNodeInfo", peerNodeInfo)
 		})
 	if err1 != nil {
 		return nil, err1

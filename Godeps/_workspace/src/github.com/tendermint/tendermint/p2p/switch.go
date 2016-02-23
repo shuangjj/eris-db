@@ -240,7 +240,7 @@ func (sw *Switch) AddPeerWithConnection(conn net.Conn, outbound bool) (*Peer, er
 	// Add the peer to .peers
 	// ignore if duplicate or if we already have too many for that IP range
 	if err := sw.peers.Add(peer); err != nil {
-		log.Notice("Ignoring peer", "error", err, "peer", peer)
+//		log.Notice("Ignoring peer", "error", err, "peer", peer)
 		peer.Stop()
 		return nil, err
 	}
@@ -251,7 +251,7 @@ func (sw *Switch) AddPeerWithConnection(conn net.Conn, outbound bool) (*Peer, er
 		sw.startInitPeer(peer)
 	}
 
-	log.Notice("Added peer", "peer", peer)
+//	log.Notice("Added peer", "peer", peer)
 	return peer, nil
 }
 
@@ -261,20 +261,20 @@ func (sw *Switch) startInitPeer(peer *Peer) {
 }
 
 func (sw *Switch) DialPeerWithAddress(addr *NetAddress) (*Peer, error) {
-	log.Info("Dialing address", "address", addr)
+//	log.Info("Dialing address", "address", addr)
 	sw.dialing.Set(addr.IP.String(), addr)
 	conn, err := addr.DialTimeout(peerDialTimeoutSeconds * time.Second)
 	sw.dialing.Delete(addr.IP.String())
 	if err != nil {
-		log.Info("Failed dialing address", "address", addr, "error", err)
+//		log.Info("Failed dialing address", "address", addr, "error", err)
 		return nil, err
 	}
 	peer, err := sw.AddPeerWithConnection(conn, true)
 	if err != nil {
-		log.Info("Failed adding peer", "address", addr, "conn", conn, "error", err)
+//		log.Info("Failed adding peer", "address", addr, "conn", conn, "error", err)
 		return nil, err
 	}
-	log.Notice("Dialed and added peer", "address", addr, "peer", peer)
+//	log.Notice("Dialed and added peer", "address", addr, "peer", peer)
 	return peer, nil
 }
 
@@ -287,7 +287,7 @@ func (sw *Switch) IsDialing(addr *NetAddress) bool {
 // which receives success values for each attempted send (false if times out)
 func (sw *Switch) Broadcast(chID byte, msg interface{}) chan bool {
 	successChan := make(chan bool, len(sw.peers.List()))
-	log.Info("Broadcast", "channel", chID, "msg", msg)
+//	log.Info("Broadcast", "channel", chID, "msg", msg)
 	for _, peer := range sw.peers.List() {
 		go func(peer *Peer) {
 			success := peer.Send(chID, msg)
@@ -318,7 +318,7 @@ func (sw *Switch) Peers() IPeerSet {
 // Disconnect from a peer due to external error.
 // TODO: make record depending on reason.
 func (sw *Switch) StopPeerForError(peer *Peer, reason interface{}) {
-	log.Notice("Stopping peer for error", "peer", peer, "error", reason)
+//	log.Notice("Stopping peer for error", "peer", peer, "error", reason)
 	sw.peers.Remove(peer)
 	peer.Stop()
 	sw.removePeerFromReactors(peer, reason)
@@ -327,7 +327,7 @@ func (sw *Switch) StopPeerForError(peer *Peer, reason interface{}) {
 // Disconnect from a peer gracefully.
 // TODO: handle graceful disconnects.
 func (sw *Switch) StopPeerGracefully(peer *Peer) {
-	log.Notice("Stopping peer gracefully")
+//	log.Notice("Stopping peer gracefully")
 	sw.peers.Remove(peer)
 	peer.Stop()
 	sw.removePeerFromReactors(peer, nil)

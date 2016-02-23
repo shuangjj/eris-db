@@ -559,7 +559,7 @@ func (cs *ConsensusState) EnterPropose(height int, round int) {
 		log.Debug(Fmt("EnterPropose(%v/%v): Invalid args. Current step: %v/%v/%v", height, round, cs.Height, cs.Round, cs.Step))
 		return
 	}
-	log.Info(Fmt("EnterPropose(%v/%v). Current: %v/%v/%v", height, round, cs.Height, cs.Round, cs.Step))
+//	log.Info(Fmt("EnterPropose(%v/%v). Current: %v/%v/%v", height, round, cs.Height, cs.Round, cs.Step))
 
 	defer func() {
 		// Done EnterPropose:
@@ -709,7 +709,7 @@ func (cs *ConsensusState) EnterPrevote(height int, round int, timedOut bool) {
 		// TODO: catchup event?
 	}
 
-	log.Info(Fmt("EnterPrevote(%v/%v). Current: %v/%v/%v", height, round, cs.Height, cs.Round, cs.Step))
+//	log.Info(Fmt("EnterPrevote(%v/%v). Current: %v/%v/%v", height, round, cs.Height, cs.Round, cs.Step))
 
 	// Sign and broadcast vote as necessary
 	cs.doPrevote(height, round)
@@ -726,7 +726,7 @@ func (cs *ConsensusState) EnterPrevote(height int, round int, timedOut bool) {
 func (cs *ConsensusState) doPrevote(height int, round int) {
 	// If a block is locked, prevote that.
 	if cs.LockedBlock != nil {
-		log.Info("EnterPrevote: Block was locked")
+//		log.Info("EnterPrevote: Block was locked")
 		cs.signAddVote(types.VoteTypePrevote, cs.LockedBlock.Hash(), cs.LockedBlockParts.Header())
 		return
 	}
@@ -765,7 +765,7 @@ func (cs *ConsensusState) EnterPrevoteWait(height int, round int) {
 	if !cs.Votes.Prevotes(round).HasTwoThirdsAny() {
 		PanicSanity(Fmt("EnterPrevoteWait(%v/%v), but Prevotes does not have any +2/3 votes", height, round))
 	}
-	log.Info(Fmt("EnterPrevoteWait(%v/%v). Current: %v/%v/%v", height, round, cs.Height, cs.Round, cs.Step))
+//	log.Info(Fmt("EnterPrevoteWait(%v/%v). Current: %v/%v/%v", height, round, cs.Height, cs.Round, cs.Step))
 
 	// Done EnterPrevoteWait:
 	cs.Round = round
@@ -797,7 +797,7 @@ func (cs *ConsensusState) EnterPrecommit(height int, round int, timedOut bool) {
 		cs.evsw.FireEvent(types.EventStringTimeoutWait(), cs.RoundStateEvent())
 	}
 
-	log.Info(Fmt("EnterPrecommit(%v/%v). Current: %v/%v/%v", height, round, cs.Height, cs.Round, cs.Step))
+//	log.Info(Fmt("EnterPrecommit(%v/%v). Current: %v/%v/%v", height, round, cs.Height, cs.Round, cs.Step))
 
 	defer func() {
 		// Done EnterPrecommit:
@@ -846,7 +846,7 @@ func (cs *ConsensusState) EnterPrecommit(height int, round int, timedOut bool) {
 
 	// If we're already locked on that block, precommit it, and update the LockedRound
 	if cs.LockedBlock.HashesTo(hash) {
-		log.Info("EnterPrecommit: +2/3 prevoted locked block. Relocking")
+//		log.Info("EnterPrecommit: +2/3 prevoted locked block. Relocking")
 		cs.LockedRound = round
 		cs.evsw.FireEvent(types.EventStringRelock(), cs.RoundStateEvent())
 		cs.signAddVote(types.VoteTypePrecommit, hash, partsHeader)
@@ -855,7 +855,7 @@ func (cs *ConsensusState) EnterPrecommit(height int, round int, timedOut bool) {
 
 	// If +2/3 prevoted for proposal block, stage and precommit it
 	if cs.ProposalBlock.HashesTo(hash) {
-		log.Info("EnterPrecommit: +2/3 prevoted proposal block. Locking", "hash", hash)
+//		log.Info("EnterPrecommit: +2/3 prevoted proposal block. Locking", "hash", hash)
 		// Validate the block.
 		if err := cs.stageBlock(cs.ProposalBlock, cs.ProposalBlockParts); err != nil {
 			PanicConsensus(Fmt("EnterPrecommit: +2/3 prevoted for an invalid block: %v", err))
@@ -895,7 +895,7 @@ func (cs *ConsensusState) EnterPrecommitWait(height int, round int) {
 	if !cs.Votes.Precommits(round).HasTwoThirdsAny() {
 		PanicSanity(Fmt("EnterPrecommitWait(%v/%v), but Precommits does not have any +2/3 votes", height, round))
 	}
-	log.Info(Fmt("EnterPrecommitWait(%v/%v). Current: %v/%v/%v", height, round, cs.Height, cs.Round, cs.Step))
+//	log.Info(Fmt("EnterPrecommitWait(%v/%v). Current: %v/%v/%v", height, round, cs.Height, cs.Round, cs.Step))
 
 	// Done EnterPrecommitWait:
 	cs.Round = round
@@ -921,7 +921,7 @@ func (cs *ConsensusState) EnterCommit(height int, commitRound int) {
 		log.Debug(Fmt("EnterCommit(%v/%v): Invalid args. Current step: %v/%v/%v", height, commitRound, cs.Height, cs.Round, cs.Step))
 		return
 	}
-	log.Info(Fmt("EnterCommit(%v/%v). Current: %v/%v/%v", height, commitRound, cs.Height, cs.Round, cs.Step))
+//	log.Info(Fmt("EnterCommit(%v/%v). Current: %v/%v/%v", height, commitRound, cs.Height, cs.Round, cs.Step))
 
 	defer func() {
 		// Done Entercommit:
@@ -1003,7 +1003,7 @@ func (cs *ConsensusState) FinalizeCommit(height int) {
 		PanicConsensus(Fmt("+2/3 committed an invalid block: %v", err))
 	}
 
-	log.Info(Fmt("Finalizing commit of block: %v", cs.ProposalBlock))
+//	log.Info(Fmt("Finalizing commit of block: %v", cs.ProposalBlock))
 	// We have the block, so stage/save/commit-vote.
 	cs.saveBlock(cs.ProposalBlock, cs.ProposalBlockParts, cs.Votes.Precommits(cs.CommitRound))
 	// Increment height.
@@ -1083,7 +1083,7 @@ func (cs *ConsensusState) AddProposalBlockPart(height int, part *types.Part) (ad
 		var n int64
 		var err error
 		cs.ProposalBlock = wire.ReadBinary(&types.Block{}, cs.ProposalBlockParts.GetReader(), &n, &err).(*types.Block)
-		log.Info("Received complete proposal", "hash", cs.ProposalBlock.Hash())
+//		log.Info("Received complete proposal", "hash", cs.ProposalBlock.Hash())
 		if cs.Step == RoundStepPropose && cs.isProposalComplete() {
 			// Move onto the next step
 			go cs.EnterPrevote(height, cs.Round, false)
@@ -1163,7 +1163,7 @@ func (cs *ConsensusState) addVote(valIndex int, vote *types.Vote, peerKey string
 			switch vote.Type {
 			case types.VoteTypePrevote:
 				prevotes := cs.Votes.Prevotes(vote.Round)
-				log.Info(Fmt("Added to prevotes: %v", prevotes.StringShort()))
+//				log.Info(Fmt("Added to prevotes: %v", prevotes.StringShort()))
 				// First, unlock if prevotes is a valid POL.
 				// >> lockRound < POLRound <= unlockOrChangeLockRound (see spec)
 				// NOTE: If (lockRound < POLRound) but !(POLRound <= unlockOrChangeLockRound),
@@ -1198,7 +1198,7 @@ func (cs *ConsensusState) addVote(valIndex int, vote *types.Vote, peerKey string
 				}
 			case types.VoteTypePrecommit:
 				precommits := cs.Votes.Precommits(vote.Round)
-				log.Info(Fmt("Added to precommit: %v", precommits.StringShort()))
+//				log.Info(Fmt("Added to precommit: %v", precommits.StringShort()))
 				hash, _, ok := precommits.TwoThirdsMajority()
 				if ok {
 					go func() {
@@ -1228,7 +1228,7 @@ func (cs *ConsensusState) addVote(valIndex int, vote *types.Vote, peerKey string
 	}
 
 	// Height mismatch, bad peer?
-	log.Info("Vote ignored and not added", "voteHeight", vote.Height, "csHeight", cs.Height)
+//	log.Info("Vote ignored and not added", "voteHeight", vote.Height, "csHeight", cs.Height)
 	return
 }
 
