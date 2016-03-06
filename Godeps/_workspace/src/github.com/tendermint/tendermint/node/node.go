@@ -77,7 +77,15 @@ func NewNode(privValidator *types.PrivValidator) *Node {
 		err := new(error)
 		wire.ReadJSONPtr(&genDoc, genDocBytes, err)
 		if *err != nil {
-			Exit(Fmt("Unable to read gendoc from db: %v", *err))
+		//	Exit(Fmt("Unable to read gendoc from db: %v", *err))
+			genDoc, _ = sm.MakeGenesisStateFromFile(stateDB, config.GetString("genesis_file"))
+			// write the gendoc to db
+			buf, n, err := new(bytes.Buffer), new(int64), new(error)
+			wire.WriteJSON(genDoc, buf, n, err)
+			stateDB.Set(stypes.GenDocKey, buf.Bytes())
+			if *err != nil {
+				Exit(Fmt("Unable to write gendoc to db: %v", *err))
+			}
 		}
 	}
 	// add the chainid to the global config
