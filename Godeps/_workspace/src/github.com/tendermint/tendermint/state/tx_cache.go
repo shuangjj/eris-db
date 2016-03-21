@@ -127,6 +127,7 @@ func (cache *TxCache) Sync() {
 
 	// Remove or update accounts
 	for addr, accInfo := range cache.accounts {
+		log.Notice("Updating Addr", "addr", addr)
 		acc, removed := accInfo.unpack()
 		if removed {
 			cache.backend.RemoveAccount(addr.Postfix(20))

@@ -143,7 +143,6 @@ func (vm *VM) Call(caller, callee *Account, code, input []byte, value int64, gas
 			}
 		}
 	}
-
 	return
 }
 

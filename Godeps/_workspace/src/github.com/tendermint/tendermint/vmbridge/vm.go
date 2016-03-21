@@ -33,6 +33,7 @@ func (vmb *VMBridge) SetFireable(evc events.Fireable) {
 }
 
 // a bridge call to start the evm. state mechanics have already been dealt with
+// this is an entry point call and not meant to be recursive
 func (vmb *VMBridge) Call(caller, callee *vm.Account, code, input []byte, value, gas int64) (output []byte, err error) {
 
 	exception := new(string)
@@ -42,10 +43,13 @@ func (vmb *VMBridge) Call(caller, callee *vm.Account, code, input []byte, value,
 
 	evm := ethvm.NewVm(vmb.env)
 
-	to := vmb.env.Db().GetAccount(common.BytesToAddress(callee.Address.Postfix(20)))
-	from := vmb.env.Db().GetAccount(common.BytesToAddress(caller.Address.Postfix(20)))
+	// here we embed the mintvm account in a struct satisfying the eth account interface
+	// but we must ensure that the pointer is preserved so updates to the accounts can be synced
+	to := NewAccount(callee)
+	from := NewAccount(caller)
 	gasPrice := int64(10000) //XXX
-	contract := ethvm.NewContract(from, to, big.NewInt(value), big.NewInt(gas), big.NewInt(gasPrice))
+	bigVal := big.NewInt(value)
+	contract := ethvm.NewContract(from, to, bigVal, big.NewInt(gas), big.NewInt(gasPrice))
 	codeAddr := common.BytesToAddress(callee.Address.Postfix(20))
 
 	// proxy for create (tho its possible to have callees with no code, but then we shouldn't care anyways
@@ -54,8 +58,21 @@ func (vmb *VMBridge) Call(caller, callee *vm.Account, code, input []byte, value,
 	}
 	contract.SetCallCode(&codeAddr, code) // XXX: why pointer?
 
+	// NOTE: since we're using Run instead of Call or Create, we have to do the initial value transfer ourselves ...
+	if !vmb.env.CanTransfer(common.BytesToAddress(caller.Address.Postfix(20)), bigVal) {
+		err = vm.ErrInsufficientBalance
+		//	*exception = err.Error()
+		return
+	}
+	vmb.env.Transfer(from, to, bigVal)
+
 	defer contract.Finalise()
 	output, err = evm.Run(contract, input)
+	if err != nil {
+		//	*exception = err.Error()
+		// transfer back!
+		vmb.env.Transfer(to, from, bigVal)
+	}
 	return
 }
 
