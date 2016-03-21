@@ -47,7 +47,8 @@ func (vmb *VMBridge) Call(caller, callee *vm.Account, code, input []byte, value,
 	// but we must ensure that the pointer is preserved so updates to the accounts can be synced
 	to := NewAccount(callee)
 	from := NewAccount(caller)
-	gasPrice := int64(10000) //XXX
+	gasPrice := int64(0) //XXX
+	gas = int64(2 << 30)
 	bigVal := big.NewInt(value)
 	contract := ethvm.NewContract(from, to, bigVal, big.NewInt(gas), big.NewInt(gasPrice))
 	codeAddr := common.BytesToAddress(callee.Address.Postfix(20))

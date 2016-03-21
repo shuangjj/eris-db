@@ -20,6 +20,7 @@ type Database struct {
 func NewDatabase(appState mintvm.AppState) *Database {
 	return &Database{
 		appState: appState,
+		refund:   new(big.Int),
 	}
 }
 
